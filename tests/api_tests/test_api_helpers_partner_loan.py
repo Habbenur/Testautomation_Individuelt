@@ -106,4 +106,22 @@ def test_update_partner_loan(api_helper: BroderAPIHelper):
     assert updated_loan.get("loan_amount") == "150000"
     assert update_resp.json.get("message") == "Loan updated successfully"
 
+def test_delete_partner_loan(api_helper: BroderAPIHelper):
+    # Först, hämta en lista över lån för att få en giltig reference_number
+    loans_resp = api_helper.get_partner_loans()
+    assert loans_resp.status_code == 200
+    loans = loans_resp.json.get("loans", [])
+    if not loans:
+        pytest.skip("No partner loans available to delete.")
+
+    reference_number = loans[0].get("reference_number")
+    assert reference_number, "Selected loan does not have a reference_number."
+
+    delete_resp = api_helper.delete_partner_loan(reference_number)
+
+    assert delete_resp.status_code == 200
+    assert delete_resp.json.get("success") is True
+    assert delete_resp.json.get("reference_number") == reference_number
+    assert delete_resp.json.get("message") == "Loan deleted successfully"
+
  

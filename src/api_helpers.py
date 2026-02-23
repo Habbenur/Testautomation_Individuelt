@@ -118,3 +118,33 @@ class BroderAPIHelper:
             json=response_payload,
             text=r.text,
         )
+    
+    def delete_partner_loan(self, reference_number: str) -> ApiResponse:
+        url = f"{self.base_url}/partner-loan-api"
+        headers = {
+            "x-admin-api-key": self.admin_api_key,
+            "Accept": "application/json",
+        }
+        params = {"reference_number": reference_number}
+
+        r = requests.delete(url, headers=headers, params=params)
+
+        # Debug output for non-OK responses
+        if not r.ok:
+            print("STATUS:", r.status_code)
+            print("BODY:", r.text)
+
+        # JSON parsing with error handling
+        try:
+            response_payload = r.json()
+        except ValueError:
+            response_payload = {}
+
+        r.raise_for_status()
+
+        return ApiResponse(
+            status_code=r.status_code,
+            headers=dict(r.headers),
+            json=response_payload,
+            text=r.text,
+        )
