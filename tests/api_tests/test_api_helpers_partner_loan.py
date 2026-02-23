@@ -65,3 +65,45 @@ def test_create_loan_application(api_helper: BroderAPIHelper):
     assert app.get("first_name") == loan_data["first_name"]
     assert app.get("last_name") == loan_data["last_name"]
     assert app.get("loan_amount") == loan_data["loan_amount"]
+
+
+def test_get_partner_loans(api_helper: BroderAPIHelper):
+    resp = api_helper.get_partner_loans()
+
+    assert resp.status_code == 200
+    assert resp.json.get("success") is True
+    assert isinstance(resp.json.get("loans"), list)
+
+def test_get_partner_loans_list(api_helper: BroderAPIHelper):
+    api_helper.get_partner_loans_list()
+    print("Get partner loans list test executed. Check output for details.")
+
+def test_update_partner_loan(api_helper: BroderAPIHelper):
+    # Först, hämta en lista över lån för att få en giltig reference_number
+    loans_resp = api_helper.get_partner_loans()
+    assert loans_resp.status_code == 200
+    loans = loans_resp.json.get("loans", [])
+    if not loans:
+        pytest.skip("No partner loans available to update.")
+
+    reference_number = loans[0].get("reference_number")
+    assert reference_number, "Selected loan does not have a reference_number."
+
+    update_data = {
+        "reference_number": reference_number,
+        "status": "denied",  # Exempel på uppdatering av status
+        "loan_amount": "150000"  # Exempel på uppdatering av lånebelopp
+    }
+
+    update_resp = api_helper.update_partner_loan(reference_number, update_data)
+
+    assert update_resp.status_code == 200
+    assert update_resp.json.get("success") is True
+    updated_loan = update_resp.json.get("loan")
+    assert updated_loan is not None
+    assert updated_loan.get("reference_number") == reference_number
+    assert updated_loan.get("status") == "denied"
+    assert updated_loan.get("loan_amount") == "150000"
+    assert update_resp.json.get("message") == "Loan updated successfully"
+
+ 
