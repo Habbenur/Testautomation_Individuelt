@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 import time
 from playwright.sync_api import sync_playwright
 
-from src.helpers import SoderBroderLoan
+from src.pages import SoderBroderLoan
 
 
 # ─────────────────────────────────────────────
