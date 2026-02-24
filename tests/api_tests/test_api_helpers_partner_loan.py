@@ -1,5 +1,5 @@
-from src.api_helpers import BroderAPIHelper
-from src.config import settings
+from src.api_client import BroderAPIClient, ApiResponse
+from src.helpers.config import settings
 from src.skattaverket_testdata import SkatteverketTestdataClient
 import pytest
 from faker import Faker
@@ -14,14 +14,14 @@ def normalize_pnr_yyyymmddxxxx(pnr: str) -> str:
     raise ValueError(f"Unexpected personnummer format: {pnr}")
 
 @pytest.fixture
-def api_helper() -> BroderAPIHelper:
-    return BroderAPIHelper(
+def api_client() -> BroderAPIClient:
+    return BroderAPIClient(
         base_url=settings.base_url,
         api_key=settings.api_key,
         admin_api_key=settings.admin_api_key
     )
 
-def test_create_loan_application(api_helper: BroderAPIHelper):
+def test_create_loan_application(api_client: BroderAPIClient):
     skv = SkatteverketTestdataClient()
     raw_pnr = skv.get_test_personnummer(limit=1)[0]
     personal_number = normalize_pnr_yyyymmddxxxx(raw_pnr)
@@ -43,7 +43,7 @@ def test_create_loan_application(api_helper: BroderAPIHelper):
         "product_type": settings.product_type
     }
 
-    resp = api_helper.create_loan_application(loan_data)
+    resp = api_client.create_loan_application(loan_data)
 
     # HTTP status code
     assert resp.status_code == 200
@@ -67,20 +67,20 @@ def test_create_loan_application(api_helper: BroderAPIHelper):
     assert app.get("loan_amount") == loan_data["loan_amount"]
 
 
-def test_get_partner_loans(api_helper: BroderAPIHelper):
-    resp = api_helper.get_partner_loans()
+def test_get_partner_loans(api_client: BroderAPIClient):
+    resp = api_client.get_partner_loans()
 
     assert resp.status_code == 200
     assert resp.json.get("success") is True
     assert isinstance(resp.json.get("loans"), list)
 
-def test_get_partner_loans_list(api_helper: BroderAPIHelper):
-    api_helper.get_partner_loans_list()
+def test_get_partner_loans_list(api_client: BroderAPIClient):
+    api_client.get_partner_loans_list()
     print("Get partner loans list test executed. Check output for details.")
 
-def test_update_partner_loan(api_helper: BroderAPIHelper):
+def test_update_partner_loan(api_client: BroderAPIClient):
     # Först, hämta en lista över lån för att få en giltig reference_number
-    loans_resp = api_helper.get_partner_loans()
+    loans_resp = api_client.get_partner_loans()
     assert loans_resp.status_code == 200
     loans = loans_resp.json.get("loans", [])
     if not loans:
@@ -95,7 +95,7 @@ def test_update_partner_loan(api_helper: BroderAPIHelper):
         "loan_amount": "150000"  # Exempel på uppdatering av lånebelopp
     }
 
-    update_resp = api_helper.update_partner_loan(reference_number, update_data)
+    update_resp = api_client.update_partner_loan(reference_number, update_data)
 
     assert update_resp.status_code == 200
     assert update_resp.json.get("success") is True
@@ -106,9 +106,9 @@ def test_update_partner_loan(api_helper: BroderAPIHelper):
     assert updated_loan.get("loan_amount") == "150000"
     assert update_resp.json.get("message") == "Loan updated successfully"
 
-def test_delete_partner_loan(api_helper: BroderAPIHelper):
+def test_delete_partner_loan(api_client: BroderAPIClient):
     # Först, hämta en lista över lån för att få en giltig reference_number
-    loans_resp = api_helper.get_partner_loans()
+    loans_resp = api_client.get_partner_loans()
     assert loans_resp.status_code == 200
     loans = loans_resp.json.get("loans", [])
     if not loans:
@@ -117,8 +117,7 @@ def test_delete_partner_loan(api_helper: BroderAPIHelper):
     reference_number = loans[0].get("reference_number")
     assert reference_number, "Selected loan does not have a reference_number."
 
-    delete_resp = api_helper.delete_partner_loan(reference_number)
-
+    delete_resp = api_client.delete_partner_loan(reference_number)
     assert delete_resp.status_code == 200
     assert delete_resp.json.get("success") is True
     assert delete_resp.json.get("reference_number") == reference_number

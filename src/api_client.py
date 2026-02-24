@@ -1,7 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
-from urllib import response
 import requests
 
 @dataclass(frozen=True)
@@ -11,12 +10,31 @@ class ApiResponse:
     json: dict[str, Any]
     text: str
 
-class BroderAPIHelper:
+class BroderAPIClient:
     """Helper functions for SöderBröder API"""
     def __init__(self, base_url: str, api_key: str, admin_api_key: str):
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.admin_api_key = admin_api_key
+
+    def _request(self, method: str, path: str, **kwargs) -> ApiResponse:
+        url = f"{self.base_url}{path}"
+        r = self.session.request(method, url, timeout=self.timeout_s, **kwargs)
+        elapsed_ms = r.elapsed.total_seconds() * 1000.0
+        try:
+            payload = r.json()
+            if not isinstance(payload, dict):
+                payload = {"_value": payload}
+        except Exception:
+            payload = None
+        return ApiResponse(
+            status_code=r.status_code,
+            headers=dict(r.headers),
+            json=payload,
+            text=r.text,
+            elapsed_ms=elapsed_ms,
+        )
+
 
     def create_loan_application(self, data: dict[str, Any]) -> ApiResponse:
         url = f"{self.base_url}/partner-loan-api"

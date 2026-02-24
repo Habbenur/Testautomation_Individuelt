@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 import os
 from dotenv import load_dotenv
 import faker
-from src.api_helpers import BroderAPIHelper
+from src.api_client import BroderAPIClient
 from src.skattaverket_testdata import SkatteverketTestdataClient, SkvResponse
 
 faker = faker.Faker("sv_SE")  # Svensk lokal för fejkdata
