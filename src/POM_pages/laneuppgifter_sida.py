@@ -1,7 +1,6 @@
 from __future__ import annotations
 from playwright.sync_api import Page, expect
 from faker import Faker
-from src.POM_pages.inkomstuppgifter_sida import Inkomstuppgifter
 fake = Faker("sv_SE")
 BASE_URL = "https://souderbroder-loan-lab.lovable.app"
 
@@ -10,10 +9,6 @@ class Laneuppgifter:
         self.page = page
 
     def laneuppgifter_form(self, amount: int) -> dict:
-        inkomstuppgifter_page = Inkomstuppgifter(self.page)
-        inkomstuppgifter_page.inkomstuppgifter_form()
-        inkomstuppgifter_page.submit_inkomstuppgifter()
-
         data = {
             "amount": amount,
         }

@@ -2,7 +2,6 @@ from __future__ import annotations
 from playwright.sync_api import Page
 from faker import Faker
 from src.POM_pages.base_page import BasePage
-from src.POM_pages.personuppgifter_sida import Personuppgifter
 fake = Faker("sv_SE")
 BASE_URL = "https://souderbroder-loan-lab.lovable.app"
 
@@ -13,10 +12,6 @@ class Inkomstuppgifter(BasePage):
         self.faker = Faker("sv_SE")  # Svensk lokal för fejkdata
 
     def inkomstuppgifter_form(self):
-        personuppgifter_page = Personuppgifter(self.page)
-        personuppgifter_page.personuppgifter_form()
-        personuppgifter_page.submit_personuppgifter()
-
         data = {
         "income": "30000",
         "employment_type": "Tillsvidareanställd",

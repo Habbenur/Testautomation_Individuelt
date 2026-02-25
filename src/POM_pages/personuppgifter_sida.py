@@ -2,7 +2,6 @@ from __future__ import annotations
 from playwright.sync_api import Page
 from faker import Faker
 from src.skattaverket_testdata import  SkatteverketTestdataClient
-from src.POM_pages.base_page import BasePage
 import re
 import random
 fake = Faker("sv_SE")
@@ -24,11 +23,6 @@ class Personuppgifter:
   
 
     def personuppgifter_form(self):
-        base_page = BasePage(self.page)
-        base_page.goto()
-        self.page.get_by_role("img").nth(1).click()
-        self.page.get_by_role("button", name="Nästa").click()
-
         # test personnummer från Skatteverket
         offset = random.randint(0, 5000)
         pnrs = self.skv.get_test_personnummer(limit=1, offset=offset)
