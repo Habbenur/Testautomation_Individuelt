@@ -94,16 +94,6 @@ class BroderAPIClient:
             json=payload,
             text=r.text,
         )
-    def get_partner_loans_list(self):
-        url = f"{self.base_url}/partner-loan-api"   
-        headers = {
-            "x-api-key": self.api_key,
-            "Accept": "application/json",
-        }
-        response = requests.get(url, headers=headers)
-        data = response.json()
-        print(f"Antal lån: {data['total_loans']}")
-        print(f"Lån: {data['loans']}")
 
     def update_partner_loan(self, reference_number: str, update_data: dict[str, Any]) -> ApiResponse:
         url = f"{self.base_url}/partner-loan-api"
