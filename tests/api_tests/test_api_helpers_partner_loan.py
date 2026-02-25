@@ -74,10 +74,6 @@ def test_get_partner_loans(api_client: BroderAPIClient):
     assert resp.json.get("success") is True
     assert isinstance(resp.json.get("loans"), list)
 
-def test_get_partner_loans_list(api_client: BroderAPIClient):
-    api_client.get_partner_loans_list()
-    print("Get partner loans list test executed. Check output for details.")
-
 def test_update_partner_loan(api_client: BroderAPIClient):
     # Först, hämta en lista över lån för att få en giltig reference_number
     loans_resp = api_client.get_partner_loans()
