@@ -1,7 +1,7 @@
 from __future__ import annotations
 from playwright.sync_api import Page
 from faker import Faker
-from src.skattaverket_testdata import  SkatteverketTestdataClient
+from src.helpers.skattaverket_testdata import  SkatteverketTestdataClient
 import re
 import random
 fake = Faker("sv_SE")

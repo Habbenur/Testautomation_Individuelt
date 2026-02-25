@@ -1,6 +1,6 @@
-from src.api_client import BroderAPIClient, ApiResponse
+from src.helpers.api_client import BroderAPIClient, ApiResponse
 from src.helpers.config import settings
-from src.skattaverket_testdata import SkatteverketTestdataClient
+from src.helpers.skattaverket_testdata import SkatteverketTestdataClient
 import pytest
 from faker import Faker
 import re
