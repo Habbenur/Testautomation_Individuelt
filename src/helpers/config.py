@@ -10,8 +10,8 @@ load_dotenv()
 @dataclass(frozen=True)
 class Settings:
     base_url = "https://kzmcpfklrqymzazaxlmv.supabase.co/functions/v1" 
-    api_key: str = os.getenv("x-api-key")
-    admin_api_key: str = os.getenv("x-admin-api-key")
+    api_key: str = os.getenv("X_API_KEY")
+    admin_api_key: str = os.getenv("X_ADMIN_API_KEY")
     skv = SkatteverketTestdataClient()
     personal_number = skv.get_test_personnummer(limit=10)[0]
     first_name: str = faker.first_name()
